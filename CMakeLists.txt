@@ -5,12 +5,23 @@ option(BUILD_SAMPLES ON)
 set(PROJECT_NAME matrix)
 project(${PROJECT_NAME})
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include(CTest)
 enable_testing()  # defines BUILD_TESTING
 
 set(MP2_TESTS   "test_${PROJECT_NAME}")
 set(MP2_CUSTOM_PROJECT "${PROJECT_NAME}")
 set(MP2_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+if(MSVC)
+	add_compile_options(/O2)
+else()
+	add_compile_options(-O2)
+endif()
+find_package(OpenMP REQUIRED)
+
 
 add_subdirectory(include)
 
