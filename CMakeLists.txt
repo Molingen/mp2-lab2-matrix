@@ -20,8 +20,8 @@ if(MSVC)
 else()
 	add_compile_options(-O2)
 endif()
-find_package(OpenMP REQUIRED)
 
+find_package(OpenMP REQUIRED)
 
 add_subdirectory(include)
 

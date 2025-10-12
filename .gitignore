@@ -11,6 +11,7 @@
 *.sln.docstates
 
 cmake-build-debug
+cmake-build-release
 .idea
 
 # User-specific files (MonoDevelop/Xamarin Studio)
