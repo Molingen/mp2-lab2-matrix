@@ -7,7 +7,11 @@
 #define __TDynamicMatrix_H__
 #include <iostream>
 #include <numeric>
+
+#ifdef USE_OPENMP
 #include <omp.h>
+#endif
+
 const int MAX_VECTOR_SIZE = 100000000;
 const int MAX_MATRIX_SIZE = 10000;
 
