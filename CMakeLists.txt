@@ -17,7 +17,7 @@ set(MP2_CUSTOM_PROJECT "${PROJECT_NAME}")
 set(MP2_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 if(MSVC)
-	add_compile_options(/O2)
+	add_compile_options(/O2 /openmp:experimental)
 else()
 	add_compile_options(-O2)
 endif()

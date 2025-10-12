@@ -259,7 +259,7 @@ public:
     const size_t BLOCK_SIZE = 64; // от 32 до 128, можно побаловаться
 
     #pragma omp parallel for
-    for (size_t i = 0; i<n; i+=BLOCK_SIZE) {
+    for (int i = 0; i<static_cast<int>(n); i+=BLOCK_SIZE) {
       for (size_t k = 0; k<n; k+=BLOCK_SIZE) {
         for (size_t j = 0; j<n; j+=BLOCK_SIZE) {
 
