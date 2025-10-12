@@ -19,12 +19,14 @@ protected:
   T* pMem = nullptr;
 public:
   TDynamicVector(size_t size = 1) : sz(size) {
-    if (sz == 0)
-      throw std::out_of_range("Vector size should be greater than zero");
+    if (sz == 0 || sz > MAX_VECTOR_SIZE)
+      throw std::out_of_range("Vector size should be greater than zero and less than MAX_SIZE");
     pMem = new T[sz]();
   }
 
   TDynamicVector(T* arr, size_t size) : sz(size) {
+    if (sz == 0 || sz > MAX_VECTOR_SIZE)
+      throw std::out_of_range("Vector size should be greater than zero and less than MAX_SIZE");
     assert(arr != nullptr && "TDynamicVector requires non-nullptr arg");
     pMem = new T[sz];
     std::copy(arr, arr + sz, pMem);
@@ -35,7 +37,6 @@ public:
     std::copy(v.pMem, v.pMem + sz, pMem);
   }
 
-  // сначала проверить все что лежало в векторе А лежит в Б, а А пустой
   TDynamicVector(TDynamicVector&& v) noexcept
     : sz(v.sz), pMem(v.pMem) {
     v.sz = 0;
@@ -86,7 +87,8 @@ public:
     return *(pMem+ind);
   }
 
-  // написать можно специализацию для флотов и интов
+  // написать можно специализацию для флотов и интов, но мне лень
+  // (еще можно написать через std::is_same как предлагал на паре)
   bool operator==(const TDynamicVector& v) const noexcept {
     return sz == v.sz && std::equal(pMem, pMem + sz, v.pMem);
   }
@@ -143,7 +145,7 @@ public:
     return temp;
   }
 
-  T operator*(const TDynamicVector& v) noexcept(noexcept(T())) {
+  T operator*(const TDynamicVector& v) {
     if (sz != v.sz) {
       throw std::invalid_argument("Vector sizes must match for dot product");
     }
@@ -162,17 +164,11 @@ public:
     return istr;
   }
 
-  // написать тесты для этого говна и для следующего говна в матрице
   friend std::ostream& operator<<(std::ostream& ostr, const TDynamicVector& v) {
     for (size_t i = 0; i < v.sz; ++i)
       ostr << v.pMem[i] << ' '; // требуется оператор<< для типа T
     return ostr;
   }
-
-  const T* begin() const noexcept { return pMem; }
-  const T* end() const noexcept { return pMem + sz; }
-  T* begin() noexcept { return pMem; }
-  T* end() noexcept { return pMem + sz; }
 };
 
 
@@ -185,6 +181,8 @@ class TDynamicMatrix : TDynamicVector<TDynamicVector<T>> {
   using TBASE::sz;
 public:
   TDynamicMatrix(size_t s = 1) : TBASE(s) {
+    if (s == 0 || s > MAX_MATRIX_SIZE)
+      throw std::out_of_range("Matrix size should be greater than zero and less than MAX_SIZE");
     for (size_t i = 0; i<sz; ++i)
       pMem[i] = TDynamicVector<T>(sz);
   }
@@ -198,6 +196,10 @@ public:
       if (pMem[i] != m.pMem[i]) return false;
     }
     return true;
+  }
+
+  bool operator!=(const TDynamicMatrix& m) const noexcept {
+    return !operator==(m);
   }
 
   // матрично-скалярные операции
@@ -232,6 +234,7 @@ public:
     }
     return temp;
   }
+
   TDynamicMatrix operator-(const TDynamicMatrix& m) {
     if (sz != m.sz) {
       throw std::invalid_argument("Matrix sizes must match for subtraction");
@@ -282,6 +285,8 @@ public:
     }
     return res;
   }
+
+  size_t size() const noexcept { return sz; }
 
   // ввод/вывод
   friend std::istream& operator>>(std::istream& istr, TDynamicMatrix& m) {
